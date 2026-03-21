@@ -12,7 +12,9 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.client.bot import DefaultBotProperties
 
-TOKEN = "8631033545:AAHOMm7heMBNSaoeyJnraP-ehIIE50ucE_A"
+import os
+
+TOKEN = os.getenv("BOT_TOKEN")
 ADMIN_ID = 8382103178
 SUPPORT_USERNAME = "manager_angels"  # без @
 # ===== ОБЯЗАТЕЛЬНАЯ ПОДПИСКА =====
