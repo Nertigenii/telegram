@@ -11,6 +11,7 @@ from aiogram.filters import CommandStart, Command
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.client.bot import DefaultBotProperties
+from aiogram.exceptions import TelegramForbiddenError, TelegramRetryAfter
 
 import os
 
@@ -25,7 +26,7 @@ LOG_BOT_TOKEN = "8638120110:AAE7luaeqX7t6TciXFUVhIkq90OC5Q2q368"
 LOG_CHAT_ID = -1003808836404  # ID чата/группы для логов
 log_bot = Bot(token=LOG_BOT_TOKEN)
 
-from aiogram.exceptions import TelegramRetryAfter
+
 import asyncio
 
 async def send_log(user: Message | CallbackQuery, action: str):
@@ -39,7 +40,7 @@ async def send_log(user: Message | CallbackQuery, action: str):
             break
         except TelegramRetryAfter as e:
             await asyncio.sleep(e.retry_after)
-
+ 
 # ================== DATABASE ==================
 
 class Database:
@@ -79,6 +80,14 @@ class Database:
             "INSERT OR IGNORE INTO users (user_id, is_admin) VALUES (?, 1)",
             (ADMIN_ID,)
         )
+
+        try:
+            await self.db.execute("""
+                ALTER TABLE users ADD COLUMN is_blocked INTEGER DEFAULT 0
+            """)
+        except:
+            pass
+        
         await self.db.commit()
 
     async def add_user(self, user_id: int, referrer_id: int | None = None):
@@ -130,7 +139,7 @@ class Database:
 
     async def get_all_users(self):
         async with self.db.execute(
-            "SELECT user_id FROM users WHERE is_banned = 0"
+            "SELECT user_id FROM users WHERE is_banned = 0 AND is_blocked = 0"
         ) as cursor:
             return await cursor.fetchall()
     
@@ -149,7 +158,7 @@ class Database:
 
     async def get_stats(self):
     # Общее количество пользователей
-        async with self.db.execute("SELECT COUNT(*) FROM users") as cursor:
+        async with self.db.execute("SELECT COUNT(*) FROM users WHERE is_blocked = 0") as cursor:
             total_users = (await cursor.fetchone())[0]
 
     # Сумма всех монет
@@ -446,6 +455,17 @@ async def broadcast_send(message: Message, state: FSMContext):
             await bot.send_message(user[0], message.text)
             await asyncio.sleep(0.05)
             sent += 1
+
+        except TelegramForbiddenError:
+            failed += 1
+
+            # пользователь заблокировал бота
+            await db.db.execute(
+                "UPDATE users SET is_blocked = 1 WHERE user_id = ?",
+                (user[0],)
+            )
+            await db.db.commit()
+
         except Exception:
             failed += 1
 
