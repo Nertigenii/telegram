@@ -22,7 +22,7 @@ SUPPORT_USERNAME = "dashqaz"  # без @
 
 
 # ===== Логи =====
-LOG_BOT_TOKEN = os.getenv("LOG_BOT_TOKEN")
+LOG_BOT_TOKEN = "8752598837:AAEz5tNVIG6kXYg0RtNfrH__PLXa3kEQgUo"
 LOG_CHAT_ID = -5106589315  # ID чата/группы для логов
 log_bot = Bot(token=LOG_BOT_TOKEN)
 
