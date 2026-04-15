@@ -16,14 +16,14 @@ from aiogram.exceptions import TelegramForbiddenError, TelegramRetryAfter
 import os
 
 TOKEN = os.getenv("BOT_TOKEN")
-ADMIN_ID = 8382103178
-SUPPORT_USERNAME = "manager_angels"  # без @
+ADMIN_ID = 920620417
+SUPPORT_USERNAME = "dashqaz"  # без @
 # ===== ОБЯЗАТЕЛЬНАЯ ПОДПИСКА =====
 
 
 # ===== Логи =====
-LOG_BOT_TOKEN = "8638120110:AAE7luaeqX7t6TciXFUVhIkq90OC5Q2q368"
-LOG_CHAT_ID = -1003808836404  # ID чата/группы для логов
+LOG_BOT_TOKEN = os.getenv("LOG_BOT_TOKEN")
+LOG_CHAT_ID = -5106589315  # ID чата/группы для логов
 log_bot = Bot(token=LOG_BOT_TOKEN)
 
 
