@@ -325,7 +325,8 @@ async def send_random_video(callback: CallbackQuery):
 
     await bot.send_video(
         callback.from_user.id,
-        video[0]
+        video[0],
+        protect_content=True
     )
 
     # ===== ЛОГ ПОКУПКИ ВИДЕО =====
